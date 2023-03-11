@@ -22,7 +22,13 @@ namespace JobTrackerAPI.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAll()
         {
-            string query = @"select * from job_applications where id = 2;";
+            string query = @"select id, position_title, company, website_link, location, application_status,
+                            DATE_FORMAT(date_applied, '%Y-%m-%d') as date_applied, 
+                            DATE_FORMAT(interview1_date, '%Y-%m-%d') as interview1_date,
+                            DATE_FORMAT(interview2_date, '%Y-%m-%d') as interview2_date,
+                            DATE_FORMAT(interview3_date, '%Y-%m-%d') as interview3_date,note,
+                            days_since_applying, days_since_interview1, days_since_interview2, days_since_interview3
+                            from job_applications;";
 
             DataTable table = new DataTable();
             string sqlConnection = _configuration.GetConnectionString("MySqlConnection");
@@ -35,7 +41,6 @@ namespace JobTrackerAPI.Controllers
                         Console.WriteLine(connection.Ping()); 
                     });
 
-
                 using var command = new MySqlCommand(query, connection);
                 { 
                      myReader = await command.ExecuteReaderAsync();
@@ -43,13 +48,11 @@ namespace JobTrackerAPI.Controllers
                         // do something with 'value'
                        //var value = myReader.GetValue(2);
                         table.Load(myReader);
-
                 }
                 if (table.Rows.Count == 0)
                 {
                     return new JsonResult(NoContent());
                 }
-
             }
             return new JsonResult(table);
         }
@@ -59,7 +62,12 @@ namespace JobTrackerAPI.Controllers
         [HttpPost]
         public async Task<JsonResult> Create(job_applications jobs)
         {
-            string query = @"insert into job_applications (position_title) values (@position_title);";
+            string query = @"insert into job_applications ( position_title, company, website_link, location, application_status,
+                            date_applied, interview1_date,interview2_date,interview3_date,note,
+                            days_since_applying, days_since_interview1, days_since_interview2, days_since_interview3) 
+                            values ( @position_title, @company, @website_link, @location, @application_status,
+                            @date_applied, @interview1_date, @interview2_date, @interview3_date,@note,
+                            @days_since_applying, @days_since_interview1, @days_since_interview2, @days_since_interview3);";
 
             DataTable table = new DataTable();
             string sqlConnection = _configuration.GetConnectionString("MySqlConnection");
@@ -76,6 +84,20 @@ namespace JobTrackerAPI.Controllers
                 using var command = new MySqlCommand(query, connection);
                 {
                     command.Parameters.AddWithValue("@position_title", jobs.position_title);
+                    command.Parameters.AddWithValue("@company", jobs.company);
+                    command.Parameters.AddWithValue("@website_link", jobs.website_link);
+                    command.Parameters.AddWithValue("@location", jobs.location);
+                    command.Parameters.AddWithValue("@application_status", jobs.application_status);
+                    command.Parameters.AddWithValue("@date_applied", jobs.date_applied);
+                    command.Parameters.AddWithValue("@interview1_date", jobs.interview1_date);
+                    command.Parameters.AddWithValue("@interview2_date", jobs.interview2_date);
+                    command.Parameters.AddWithValue("@interview3_date", jobs.interview3_date);
+                    command.Parameters.AddWithValue("@note", jobs.note);
+                    command.Parameters.AddWithValue("@days_since_applying", jobs.days_since_applying);
+                    command.Parameters.AddWithValue("@days_since_interview1", jobs.days_since_interview1);
+                    command.Parameters.AddWithValue("@days_since_interview2", jobs.days_since_interview2);
+                    command.Parameters.AddWithValue("@days_since_interview3", jobs.days_since_interview3);
+
                     myReader = await command.ExecuteReaderAsync();
                     table.Load(myReader);
 
@@ -107,6 +129,10 @@ namespace JobTrackerAPI.Controllers
                 {
                     command.Parameters.AddWithValue("@id", jobs.id);
                     command.Parameters.AddWithValue("@position_title", jobs.position_title);
+                    command.Parameters.AddWithValue("@company", jobs.company);
+                    command.Parameters.AddWithValue("@website_link", jobs.website_link);
+                    command.Parameters.AddWithValue("@location", jobs.location);
+                    command.Parameters.AddWithValue("@application_status", jobs.application_status);
                     myReader = await command.ExecuteReaderAsync();
                     table.Load(myReader);
 
@@ -144,23 +170,6 @@ namespace JobTrackerAPI.Controllers
             }
             return new JsonResult("Infomation deleted!");
         }
-
-        // Get
-        //[HttpGet]
-        // public JsonResult Get(int id)
-        // {
-        //     var result = _context.JobApplications.Find(id);
-
-        //     if (result == null)
-        //     {
-        //         return new JsonResult(NotFound());
-        //     }
-
-        //     return new JsonResult(Ok(result));
-        // }
-
-
-
 
     }
 }

@@ -9,7 +9,7 @@
         public string location { get; set; }
         public string? note { get; set; }
         public string application_status { get; set; }
-        public string date_applied { get; set; }
+        public string? date_applied { get; set; }
         public string? interview1_date { get; set; }
         public string? interview2_date { get; set; }
         public string? interview3_date { get; set; }

@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/jobtracker-api-mysql-server/databases/jobtracker-api.db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:AzureSqlConnection",
+      "dynamicId": null
+    }
+  }
+}
